@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senda de Paz — Devocionales, Reflexiones y Oración</title>
+    
+    <!-- SEO y Redes Sociales (Open Graph) -->
+    <meta name="description" content="Un espacio de quietud con devocionales diarios, reflexiones bíblicas y oración para renovar tu alma.">
+    <meta property="og:title" content="Senda de Paz — Devocionales y Oración">
+    <meta property="og:description" content="Detén la prisa y deja que su Palabra renueve tu alma. Devocionales diarios y espacio de oración.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://tu-dominio.com/og-image.jpg"> <!-- Cambia esto por tu imagen real -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Lora', 'serif'] },
+                    colors: {
+                        sand: { 50: '#FAF8F5', 100: '#F3EFEA', 200: '#E5DEC9', 300: '#D2C5AB', 800: '#3D3730', 900: '#26221D' },
+                        olive: { 50: '#F4F6F3', 100: '#E3E8E1', 600: '#556B52', 700: '#435640', 800: '#354433' },
+                        gold: { 500: '#B5894C', 600: '#9A7139' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Animación suave al hacer scroll */
+        .reveal { opacity: 0; transform: translateY(24px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        /* Estilos profesionales para impresión */
+        @media print {
+            header, footer, #donativos, #diario, #oracion, .no-print, #toast-container, #back-to-top, #scroll-progress, .filter-btn { display: none !important; }
+            body { background: white; color: #1a1a1a; }
+            .shadow-sm, .shadow-md, .shadow-xl { box-shadow: none !important; }
+            .border { border: 1px solid #e5e7eb !important; }
+            #devocional-hoy { background: white !important; border: none !important; padding: 0 !important; }
+            a { text-decoration: none; color: #1a1a1a; }
+            .font-serif { font-size: 14pt; }
+        }
+    </style>
+</head>
+<body class="bg-sand-50 text-sand-900 font-sans antialiased selection:bg-olive-100 selection:text-olive-800">
+
+    <!-- Barra de progreso de lectura -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gold-500 z-[60] w-0 transition-all duration-100 ease-out"></div>
+
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <header class="sticky top-0 z-40 bg-sand-50/90 backdrop-blur-md border-b border-sand-200/70">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-9 h-9 rounded-xl bg-olive-700 text-sand-50 flex items-center justify-center shadow-sm group-hover:bg-olive-800 transition-colors">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="font-serif text-lg font-semibold tracking-tight text-sand-900 block leading-none">Senda de Paz</span>
+                    <span class="text-[11px] text-sand-800/70 tracking-wider uppercase">Devocionales &amp; Oración</span>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-sand-800" aria-label="Principal">
+                <a href="#devocional-hoy" class="hover:text-olive-700 transition-colors">Devocional de Hoy</a>
+                <a href="#reflexiones" class="hover:text-olive-700 transition-colors">Reflexiones</a>
+                <a href="#oracion" class="hover:text-olive-700 transition-colors">Peticiones</a>
+                <a href="#diario" class="hover:text-olive-700 transition-colors">Mi Diario</a>
+            </nav>
+            <div class="flex items-center gap-3">
+                <a href="#donativos" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gold-600 text-white text-sm font-medium hover:bg-gold-500 transition-all shadow-sm">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
+                    <span>Donar</span>
+                </a>
+                <button id="mobile-menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden p-2 rounded-xl text-sand-800 hover:bg-sand-100 transition-colors">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-sand-50 border-b border-sand-200 px-4 pt-2 pb-5 space-y-1.5">
+            <a href="#devocional-hoy" class="block px-3 py-2.5 rounded-xl text-base font-medium text-sand-800 hover:bg-sand-100">Devocional de Hoy</a>
+            <a href="#reflexiones" class="block px-3 py-2.5 rounded-xl text-base font-medium text-sand-800 hover:bg-sand-100">Reflexiones</a>
+            <a href="#oracion" class="block px-3 py-2.5 rounded-xl text-base font-medium text-sand-800 hover:bg-sand-100">Peticiones de Oración</a>
+            <a href="#diario" class="block px-3 py-2.5 rounded-xl text-base font-medium text-sand-800 hover:bg-sand-100">Mi Diario</a>
+            <a href="#donativos" class="block px-3 py-2.5 rounded-xl text-base font-medium text-gold-600 hover:bg-sand-100">Donativos</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section con degradado sutil de fondo -->
+        <section class="relative py-16 sm:py-24 px-4 sm:px-6 overflow-hidden reveal">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-olive-100/40 via-transparent to-transparent pointer-events-none"></div>
+            <div class="max-w-3xl mx-auto text-center relative z-10">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-olive-100/80 text-olive-800 text-xs font-medium tracking-wide mb-6">
+                    <i data-lucide="sun" class="w-3.5 h-3.5 text-gold-600"></i>
+                    <span>UN ESPACIO DE QUIETUD Y ENCUENTRO CON DIOS</span>
+                </div>
+                <h1 class="font-serif text-3xl sm:text-5xl font-medium text-sand-900 leading-tight mb-6">
+                    Detén la prisa y deja que su Palabra renueve tu alma
+                </h1>
+                <p class="text-base sm:text-lg text-sand-800/80 leading-relaxed max-w-2xl mx-auto mb-10">
+                    Un rincón digital diseñado para la lectura pausada, devocionales diarios, palabras de aliento y oración.
+                </p>
+                <div class="bg-white/95 border border-sand-200/80 rounded-2xl p-6 sm:p-8 shadow-sm max-w-2xl mx-auto text-left relative backdrop-blur-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-widest text-gold-600">Pensamiento para meditar hoy</span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="cambiarVersiculo()" class="inline-flex items-center gap-1.5 text-xs text-sand-800/70 hover:text-olive-700 px-2.5 py-1.5 rounded-lg hover:bg-sand-100 transition-colors" aria-label="Mostrar otro pensamiento">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                <span class="hidden sm:inline">Otro</span>
+                            </button>
+                            <button onclick="copiarVersiculo()" class="inline-flex items-center gap-1.5 text-xs text-sand-800/70 hover:text-olive-700 px-2.5 py-1.5 rounded-lg hover:bg-sand-100 transition-colors" aria-label="Copiar pensamiento">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span class="hidden sm:inline">Copiar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <blockquote id="daily-verse-text" class="font-serif italic text-lg sm:text-xl text-sand-900 leading-relaxed mb-3">
+                        La paz del Señor guarda el corazón y los pensamientos cuando entregamos nuestras cargas en oración.
+                    </blockquote>
+                    <cite id="daily-verse-ref" class="not-italic text-sm font-medium text-olive-700 block">
+                        — Paráfrasis inspirada en Filipenses 4:6-7
+                    </cite>
+                </div>
+            </div>
+        </section>
+
+        <section id="devocional-hoy" class="py-14 sm:py-20 px-4 sm:px-6 bg-sand-100/70 border-y border-sand-200/60 reveal">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-olive-700 block mb-1">Lectura Diaria</span>
+                        <h2 class="font-serif text-2xl sm:text-3xl font-medium text-sand-900">Devocional de Hoy</h2>
+                        <span id="fecha-actual" class="text-xs font-medium text-sand-800/60 mt-1 block capitalize"></span>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-white border border-sand-200 text-sand-800">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-gold-600"></i>
+                        3 min de lectura
+                    </span>
+                </div>
+
+                <article class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-sand-200/80">
+                    <div class="border-b border-sand-200/70 pb-6 mb-7">
+                        <p class="text-sm text-gold-600 font-medium mb-2">Salmo 46:10 · Quietud y Confianza</p>
+                        <h3 class="font-serif text-2xl sm:text-3xl font-semibold text-sand-900 leading-snug mb-4">
+                            El arte espiritual de quedarse quieto
+                        </h3>
+                        <div class="bg-sand-50 border-l-4 border-olive-600 px-5 py-4 rounded-r-xl font-serif italic text-sand-800 text-base sm:text-lg">
+                            En medio del ruido exterior, la invitación divina sigue siendo la misma: detener el afán, soltar el control y reconocer que Él sigue siendo Dios sobre cada circunstancia.
+                        </div>
+                    </div>
+
+                    <div class="space-y-5 text-sand-800/90 text-base sm:text-[17px] leading-relaxed">
+                        <p>Vivimos acostumbrados a medir nuestro valor por la rapidez con la que resolvemos problemas o llenamos nuestra agenda. Cuando llega la incertidumbre, nuestro primer impulso suele ser correr más deprisa, preocuparnos más o intentar controlar cada detalle por nuestra cuenta.</p>
+                        <p>Sin embargo, la quietud a la que nos llama la Escritura no es pasividad ni resignación; es una decisión consciente de confianza. Quedarse quieto delante de Dios significa bajar las armas de la ansiedad y recordar que el peso del mundo no descansa sobre nuestros hombros, sino en sus manos fieles.</p>
+                        <p>Hoy, antes de responder al siguiente mensaje o enfrentar la siguiente tarea, tómate dos minutos en silencio. Respira profundo y entrega aquello que hoy supera tus fuerzas.</p>
+                    </div>
+
+                    <div class="mt-8 pt-7 border-t border-sand-200/70 grid sm:grid-cols-2 gap-5">
+                        <div class="bg-olive-50/70 rounded-2xl p-5 border border-olive-100">
+                            <div class="flex items-center gap-2 text-olive-800 font-semibold text-sm mb-2">
+                                <i data-lucide="compass" class="w-4 h-4"></i>
+                                <span>Pregunta para meditar</span>
+                            </div>
+                            <p class="text-sm text-sand-800/85 leading-relaxed">¿Qué preocupación estoy intentando cargar hoy con mis propias fuerzas que necesito entregar en oración?</p>
+                        </div>
+                        <div class="bg-sand-50 rounded-2xl p-5 border border-sand-200/80">
+                            <div class="flex items-center gap-2 text-gold-600 font-semibold text-sm mb-2">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>Oración breve</span>
+                            </div>
+                            <p class="text-sm italic font-serif text-sand-800/90 leading-relaxed">“Señor, aquieta mi mente y enséñame a descansar en tu fidelidad. Renueva mis fuerzas y guía mis pasos hoy en tu paz. Amén.”</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="reflexiones" class="py-16 sm:py-24 px-4 sm:px-6 reveal">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-olive-700 block mb-2">Biblioteca de Aliento</span>
+                    <h2 class="font-serif text-2xl sm:text-4xl font-medium text-sand-900 mb-3">Palabras de Reflexión</h2>
+                    <p class="text-sm sm:text-base text-sand-800/75">Selecciona lo que tu corazón necesita hoy para encontrar una lectura breve y edificante.</p>
+                </div>
+
+                <div id="category-filters" class="flex flex-wrap items-center justify-center gap-2 mb-10 no-print" role="group" aria-label="Filtrar reflexiones por tema">
+                    <button data-filter="todos" aria-pressed="true" class="filter-btn active px-4 py-2 rounded-full text-sm font-medium bg-olive-700 text-white shadow-sm transition-all">Todos</button>
+                    <button data-filter="paz" aria-pressed="false" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-sand-200 text-sand-800 hover:bg-sand-100 transition-all">Paz</button>
+                    <button data-filter="esperanza" aria-pressed="false" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-sand-200 text-sand-800 hover:bg-sand-100 transition-all">Esperanza</button>
+                    <button data-filter="gratitud" aria-pressed="false" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-sand-200 text-sand-800 hover:bg-sand-100 transition-all">Gratitud</button>
+                    <button data-filter="fortaleza" aria-pressed="false" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-sand-200 text-sand-800 hover:bg-sand-100 transition-all">Fortaleza</button>
+                </div>
+
+                <div id="reflections-grid" class="grid md:grid-cols-2 gap-6"></div>
+            </div>
+        </section>
+
+        <section id="oracion" class="py-16 sm:py-24 px-4 sm:px-6 bg-sand-100/80 border-y border-sand-200/70 reveal">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-8">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-olive-700 block mb-2">Comunidad y Apoyo</span>
+                    <h2 class="font-serif text-2xl sm:text-4xl font-medium text-sand-900 mb-3">Muro de Peticiones de Oración</h2>
+                    <p class="text-sm sm:text-base text-sand-800/75">No tienes que caminar solo. Escribe tu motivo de oración o únete orando por las necesidades de otros.</p>
+                </div>
+
+                <div class="max-w-2xl mx-auto mb-10 flex items-start gap-3 bg-white border border-gold-500/40 rounded-2xl p-4 text-sm text-sand-800">
+                    <i data-lucide="info" class="w-5 h-5 text-gold-600 shrink-0 mt-0.5"></i>
+                    <p><strong>Aviso:</strong> este muro es una demostración. Las peticiones de ejemplo son ilustrativas y las que escribas solo se ven en tu dispositivo mientras la página esté abierta.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8 items-start">
+                    <div class="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border border-sand-200/90 shadow-sm no-print">
+                        <h3 class="font-serif text-xl font-semibold text-sand-900 mb-2">Escribe tu petición</h3>
+                        <p class="text-xs sm:text-sm text-sand-800/70 mb-6">Evita compartir datos personales como direcciones o teléfonos.</p>
+
+                        <form id="prayer-form" class="space-y-4">
+                            <div>
+                                <label for="prayer-name" class="block text-xs font-medium text-sand-800 mb-1.5">Tu nombre (o Anónimo)</label>
+                                <input type="text" id="prayer-name" maxlength="40" placeholder="Ej. María G." class="w-full px-4 py-2.5 rounded-xl bg-sand-50 border border-sand-200 text-sm text-sand-900 focus:outline-none focus:border-olive-600 focus:ring-2 focus:ring-olive-600/15 transition-all">
+                            </div>
+                            <div>
+                                <label for="prayer-topic" class="block text-xs font-medium text-sand-800 mb-1.5">Motivo principal</label>
+                                <select id="prayer-topic" class="w-full px-4 py-2.5 rounded-xl bg-sand-50 border border-sand-200 text-sm text-sand-900 focus:outline-none focus:border-olive-600 focus:ring-2 focus:ring-olive-600/15 transition-all">
+                                    <option value="Salud y sanidad">Salud y sanidad</option>
+                                    <option value="Familia y hogar">Familia y hogar</option>
+                                    <option value="Paz y fortaleza">Paz y fortaleza interior</option>
+                                    <option value="Provisión y trabajo">Provisión y trabajo</option>
+                                    <option value="Acción de gracias">Acción de gracias</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="prayer-text" class="block text-xs font-medium text-sand-800 mb-1.5">Petición de oración *</label>
+                                <textarea id="prayer-text" rows="4" required maxlength="500" placeholder="Escribe aquí aquello por lo que deseas que oremos..." class="w-full px-4 py-3 rounded-xl bg-sand-50 border border-sand-200 text-sm text-sand-900 focus:outline-none focus:border-olive-600 focus:ring-2 focus:ring-olive-600/15 transition-all resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 px-5 rounded-xl bg-olive-700 hover:bg-olive-800 text-white text-sm font-medium shadow-sm transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>Añadir a mi muro</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-sm font-medium text-sand-800">Peticiones recientes</span>
+                            <span id="prayer-count" class="text-xs text-sand-800/70"></span>
+                        </div>
+                        <div id="prayer-list" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="diario" class="py-16 sm:py-24 px-4 sm:px-6 reveal">
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-white rounded-3xl p-6 sm:p-10 border border-sand-200/90 shadow-sm">
+                    <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-widest text-gold-600 block mb-1">Espacio Privado</span>
+                            <h2 class="font-serif text-2xl sm:text-3xl font-medium text-sand-900">Mi Nota de Meditación</h2>
+                            <p class="text-sm text-sand-800/75 mt-1">Escribe lo que Dios habló a tu corazón hoy. Se guarda únicamente en tu navegador.</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-2xl bg-sand-100 text-olive-700 flex items-center justify-center shrink-0">
+                            <i data-lucide="pen-line" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <label for="journal-input" class="sr-only">Nota de meditación</label>
+                    <textarea id="journal-input" rows="5" placeholder="Hoy me siento agradecido por... / Me gustaría recordar este pensamiento..." class="w-full p-4 rounded-2xl bg-sand-50 border border-sand-200 text-sand-900 text-sm sm:text-base leading-relaxed focus:outline-none focus:border-olive-600 focus:ring-2 focus:ring-olive-600/15 transition-all mb-4"></textarea>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <span id="journal-status" class="text-xs text-sand-800/60">Tus notas permanecen privadas en este dispositivo.</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="limpiarDiario()" class="px-4 py-2 rounded-xl text-xs font-medium text-sand-800/70 hover:bg-sand-100 transition-colors">Limpiar</button>
+                            <button onclick="guardarDiario()" class="px-5 py-2.5 rounded-xl bg-olive-700 hover:bg-olive-800 text-white text-sm font-medium shadow-sm transition-all inline-flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                                <span>Guardar Nota</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="donativos" class="py-16 sm:py-24 px-4 sm:px-6 bg-olive-700 text-sand-50 reveal">
+            <div class="max-w-3xl mx-auto text-center">
+                <div class="w-12 h-12 mx-auto rounded-2xl bg-sand-50/15 flex items-center justify-center mb-5">
+                    <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xs font-semibold uppercase tracking-widest text-olive-100 block mb-2">Sostén este ministerio</span>
+                <h2 class="font-serif text-2xl sm:text-4xl font-medium mb-4">Donativos</h2>
+                <p class="text-base sm:text-lg text-sand-50/90 leading-relaxed max-w-2xl mx-auto mb-4">
+                    Senda de Paz es gratuita y siempre lo será. Si estos devocionales han sido de bendición para ti, puedes ayudarnos a mantener la página.
+                </p>
+                <p class="text-sm text-sand-50/80 mb-8">Tu aporte es voluntario. Que cada uno dé como propuso en su corazón (2 Corintios 9:7).</p>
+                <a href="TU-ENLACE-DE-DONATIVO" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gold-500 hover:bg-gold-600 text-white text-base font-medium shadow-md transition-all">
+                    <i data-lucide="heart" class="w-5 h-5"></i>
+                    <span>Hacer un donativo</span>
+                </a>
+                <p class="text-xs text-sand-50/70 mt-6">Serás dirigido a una página de pago externa y segura.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-sand-100 border-t border-sand-200 py-12 px-4 sm:px-6 reveal">
+        <div class="max-w-5xl mx-auto">
+            <!-- Newsletter -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-sand-200/80 shadow-sm mb-10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="text-center md:text-left">
+                        <h3 class="font-serif text-xl font-semibold text-sand-900 mb-1">Recibe paz en tu correo</h3>
+                        <p class="text-sm text-sand-800/70">Un devocional breve cada mañana, sin spam.</p>
+                    </div>
+                    <form onsubmit="event.preventDefault(); mostrarToast('¡Gracias por suscribirte!');" class="flex w-full md:w-auto gap-2">
+                        <input type="email" required placeholder="tu@correo.com" class="flex-1 md:w-64 px-4 py-2.5 rounded-xl bg-sand-50 border border-sand-200 text-sm focus:outline-none focus:border-olive-600 focus:ring-2 focus:ring-olive-600/15 transition-all">
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-olive-700 hover:bg-olive-800 text-white text-sm font-medium shadow-sm transition-all whitespace-nowrap">Suscribirme</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Footer Info -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left text-xs text-sand-800/70">
+                <div>
+                    <div class="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                        <i data-lucide="book-open" class="w-4 h-4 text-olive-700"></i>
+                        <span class="font-serif font-semibold text-sand-900">Senda de Paz</span>
+                    </div>
+                    <p class="max-w-md">Un espacio sereno para cultivar la lectura devocional y la oración.</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 font-medium">
+                    <a href="#" class="hover:text-olive-700 transition-colors">Política de Privacidad</a>
+                    <a href="#" class="hover:text-olive-700 transition-colors">Términos de Uso</a>
+                    <span>© <span id="current-year"></span> Senda de Paz</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botón Volver Arriba -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 left-6 z-50 p-3 rounded-full bg-olive-700 text-white shadow-lg opacity-0 pointer-events-none transition-all duration-300 hover:bg-olive-800 translate-y-4 no-print" aria-label="Volver arriba">
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <!-- Modal de reflexión (sin cambios mayores, solo estructura) -->
+    <div id="reflection-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-sand-900/50 backdrop-blur-sm no-print">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-xl border border-sand-200 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="cerrarModal()" aria-label="Cerrar" class="absolute top-5 right-5 p-2 rounded-xl text-sand-800/70 hover:bg-sand-100 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <span id="modal-category" class="inline-block text-xs font-semibold uppercase tracking-widest text-olive-700 mb-2"></span>
+            <h3 id="modal-title" class="font-serif text-2xl font-semibold text-sand-900 mb-2"></h3>
+            <p id="modal-passage" class="text-sm font-medium text-gold-600 mb-5"></p>
+            <div id="modal-body" class="space-y-4 text-sand-800/90 text-base leading-relaxed mb-6"></div>
+            <div class="bg-sand-50 rounded-2xl p-4 border border-sand-200/80">
+                <p class="text-xs font-semibold uppercase tracking-wider text-olive-800 mb-1">Pensamiento para llevar contigo</p>
+                <p id="modal-prayer" class="text-sm italic font-serif text-sand-800"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. Fecha dinámica y Año actual
+        const fechaEl = document.getElementById('fecha-actual');
+        if (fechaEl) {
+            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const hoy = new Date().toLocaleDateString('es-ES', opciones);
+            fechaEl.textContent = hoy.charAt(0).toUpperCase() + hoy.slice(1);
+        }
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // 2. Escape HTML (Seguridad)
+        function escaparHTML(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        // 3. Menú móvil
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            const abierto = mobileMenu.classList.toggle('hidden') === false;
+            mobileMenuBtn.setAttribute('aria-expanded', String(abierto));
+        });
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // 4. Notificaciones toast
+        function mostrarToast(mensaje) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-sand-900 text-sand-50 text-xs sm:text-sm px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all duration-300 opacity-0 translate-y-2';
+            const icono = document.createElement('i');
+            icono.setAttribute('data-lucide', 'check-circle-2');
+            icono.className = 'w-4 h-4 text-olive-100 shrink-0';
+            const texto = document.createElement('span');
+            texto.textContent = mensaje;
+            toast.appendChild(icono);
+            toast.appendChild(texto);
+            container.appendChild(toast);
+            lucide.createIcons();
+            requestAnimationFrame(() => toast.classList.remove('opacity-0', 'translate-y-2'));
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // 5. Pensamientos inspirados
+        const versiculos = [
+            { texto: 'La paz del Señor guarda el corazón y los pensamientos cuando entregamos nuestras cargas en oración.', ref: '— Paráfrasis inspirada en Filipenses 4:6-7' },
+            { texto: 'El Señor es mi pastor; aun en valles de sombra, su presencia trae descanso y dirección.', ref: '— Paráfrasis inspirada en Salmo 23:1-4' },
+            { texto: 'Los que confían en el Señor renovarán sus fuerzas; caminarán sin cansarse y correrán sin fatigarse.', ref: '— Paráfrasis inspirada en Isaías 40:31' },
+            { texto: 'Nueva es su misericordia cada mañana; nunca se agota su fidelidad para quienes le buscan.', ref: '— Paráfrasis inspirada en Lamentaciones 3:22-23' }
+        ];
+        let versiculoActual = 0;
+
+        function cambiarVersiculo() {
+            versiculoActual = (versiculoActual + 1) % versiculos.length;
+            document.getElementById('daily-verse-text').textContent = versiculos[versiculoActual].texto;
+            document.getElementById('daily-verse-ref').textContent = versiculos[versiculoActual].ref;
+        }
+
+        async function copiarVersiculo() {
+            const texto = `${versiculos[versiculoActual].texto} ${versiculos[versiculoActual].ref} (Senda de Paz)`;
+            try {
+                await navigator.clipboard.writeText(texto);
+                mostrarToast('Pensamiento copiado para compartir');
+            } catch (e) {
+                mostrarToast('No se pudo copiar. Intenta seleccionar el texto.');
+            }
+        }
+
+        // 6. Reflexiones
+        const reflexiones = [
+            { id: 1, categoria: 'paz', etiqueta: 'Paz en la ansiedad', titulo: 'Cuando el mañana pesa demasiado', pasaje: 'Mateo 6:34 · Un día a la vez', resumen: 'La ansiedad suele aparecer cuando intentamos resolver hoy las batallas de la próxima semana con la gracia asignada solo para este día.', contenido: ['Muchas veces el cansancio que sentimos no proviene de lo que estamos viviendo hoy, sino de las decenas de escenarios futuros que nuestra mente intenta anticipar.', 'Dios nos concede gracia diaria, como el maná en el desierto: suficiente para sostenernos hoy, paso a paso. Cuando regresamos al presente, descubrimos que aquí y ahora su presencia nos basta.'], oracion: 'Señor, ayúdame a vivir plenamente hoy, confiando en que Tú ya estás en mi mañana.' },
+            { id: 2, categoria: 'esperanza', etiqueta: 'Esperanza y fe', titulo: 'Semillas que crecen en silencio', pasaje: 'Gálatas 6:9 · Perseverancia', resumen: 'Que aún no veas el fruto no significa que Dios haya dejado de obrar en lo profundo de tu historia.', contenido: ['Toda cosecha comienza bajo tierra, en lo oculto, donde parece que nada ocurre. Así también suceden muchas obras de restauración en nuestra vida y en nuestra familia.', 'No te desanimes si tus oraciones parecen tardar. Sigue sembrando fe, bondad y paciencia; a su tiempo verás la fidelidad de Dios florecer.'], oracion: 'Padre, fortalece mi esperanza cuando no veo respuestas inmediatas y enséñame a confiar en tus tiempos.' },
+            { id: 3, categoria: 'gratitud', etiqueta: 'Gratitud diaria', titulo: 'El hábito de mirar la gracia cotidiana', pasaje: '1 Tesalonicenses 5:18 · Corazón agradecido', resumen: 'La gratitud no niega las dificultades, pero cambia el lente con el que miramos nuestra jornada.', contenido: ['Es fácil notar lo que falta o lo que salió distinto a nuestros planes, pero requiere intención detenernos a reconocer las pequeñas muestras diarias del cuidado de Dios.', 'Agradecer por el aliento de esta mañana, una conversación sincera o la paz en medio de una prueba transforma nuestra perspectiva y llena el alma de contentamiento.'], oracion: 'Gracias, Señor, por tu bondad constante incluso en los detalles que a veces paso por alto.' },
+            { id: 4, categoria: 'fortaleza', etiqueta: 'Fortaleza', titulo: 'Fuerza nueva en medio de la debilidad', pasaje: '2 Corintios 12:9 · Gracia suficiente', resumen: 'Reconocer nuestros límites no es un fracaso espiritual; es la puerta donde comienza el sostén de Dios.', contenido: ['No tenemos que aparentar que todo está bajo control cuando el corazón está agotado. En la presencia de Dios hay permiso para ser honestos con nuestro cansancio.', 'Precisamente cuando admitimos que solos no podemos, experimentamos que su gracia nos sostiene con una firmeza que no nace de nosotros.'], oracion: 'Señor, en mi debilidad sé Tú mi roca y mi sustento durante este día.' }
+        ];
+
+        function renderizarReflexiones(filtro = 'todos') {
+            const grid = document.getElementById('reflections-grid');
+            const filtradas = filtro === 'todos' ? reflexiones : reflexiones.filter(r => r.categoria === filtro);
+            grid.innerHTML = filtradas.map(item => `
+                <article class="bg-white rounded-3xl p-6 sm:p-8 border border-sand-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-olive-700 bg-olive-50 px-3 py-1 rounded-full">${item.etiqueta}</span>
+                            <span class="text-xs text-gold-600 font-medium">${item.pasaje.split('·')[0]}</span>
+                        </div>
+                        <h3 class="font-serif text-xl sm:text-2xl font-semibold text-sand-900 mb-3">${item.titulo}</h3>
+                        <p class="text-sm sm:text-base text-sand-800/80 leading-relaxed mb-6">${item.resumen}</p>
+                    </div>
+                    <div class="pt-4 border-t border-sand-100 flex items-center justify-between">
+                        <span class="text-xs text-sand-800/60">Lectura breve</span>
+                        <button onclick="abrirModal(${item.id})" class="inline-flex items-center gap-1.5 text-sm font-medium text-olive-700 hover:text-olive-800 group">
+                            <span>Leer reflexión</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-olive-700', 'text-white', 'shadow-sm');
+                    b.classList.add('bg-white', 'border', 'border-sand-200', 'text-sand-800');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                btn.classList.remove('bg-white', 'border', 'border-sand-200', 'text-sand-800');
+                btn.classList.add('bg-olive-700', 'text-white', 'shadow-sm');
+                btn.setAttribute('aria-pressed', 'true');
+                renderizarReflexiones(btn.dataset.filter);
+            });
+        });
+
+        function abrirModal(id) {
+            const item = reflexiones.find(r => r.id === id);
+            if (!item) return;
+            document.getElementById('modal-category').textContent = item.etiqueta;
+            document.getElementById('modal-title').textContent = item.titulo;
+            document.getElementById('modal-passage').textContent = item.pasaje;
+            const cuerpo = document.getElementById('modal-body');
+            cuerpo.innerHTML = '';
+            item.contenido.forEach(texto => {
+                const p = document.createElement('p');
+                p.textContent = texto;
+                cuerpo.appendChild(p);
+            });
+            document.getElementById('modal-prayer').textContent = item.oracion;
+            const modal = document.getElementById('reflection-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('reflection-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('reflection-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'reflection-modal') cerrarModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarModal();
+        });
+
+        // 7. Muro de peticiones
+        let peticiones = [
+            { id: 1, nombre: 'Elena M.', tema: 'Salud y sanidad', texto: 'Pido oración por la recuperación de mi padre tras su cirugía esta semana, para que el Señor le dé fuerza y tranquilidad.', oraciones: 14, oradoPorMi: false, fecha: 'Hace 2 días' },
+            { id: 2, nombre: 'Carlos R.', tema: 'Provisión y trabajo', texto: 'Estoy en búsqueda de una nueva oportunidad laboral. Oro para que Dios abra la puerta adecuada y sostenga a mi familia con paz.', oraciones: 9, oradoPorMi: false, fecha: 'Hace 5 horas' },
+            { id: 3, nombre: 'Anónimo', tema: 'Paz y fortaleza', texto: 'Por sabiduría para tomar una decisión importante en mi hogar y por unidad entre nosotros.', oraciones: 18, oradoPorMi: false, fecha: 'Ayer' }
+        ];
+
+        function renderizarPeticiones() {
+            const list = document.getElementById('prayer-list');
+            document.getElementById('prayer-count').textContent = `${peticiones.length} peticiones`;
+            list.innerHTML = peticiones.map(p => `
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-sand-200/80 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold text-sm text-sand-900">${escaparHTML(p.nombre)}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-sand-100 text-sand-800/80">${escaparHTML(p.tema)}</span>
+                        </div>
+                        <span class="text-xs text-sand-800/50">${escaparHTML(p.fecha)}</span>
+                    </div>
+                    <p class="text-sm sm:text-base text-sand-800/90 leading-relaxed mb-4">${escaparHTML(p.texto)}</p>
+                    <div class="flex items-center justify-between pt-3 border-t border-sand-100">
+                        <span class="text-xs text-sand-800/70">${p.oraciones} ${p.oraciones === 1 ? 'persona ha orado' : 'personas han orado'}</span>
+                        <button onclick="apoyarEnOracion(${p.id})" aria-pressed="${p.oradoPorMi}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${p.oradoPorMi ? 'bg-olive-700 text-white' : 'bg-olive-50 text-olive-800 hover:bg-olive-100'}">
+                            <i data-lucide="heart" class="w-3.5 h-3.5 ${p.oradoPorMi ? 'fill-current' : ''}"></i>
+                            <span>${p.oradoPorMi ? 'Orando contigo' : 'Me uno en oración'}</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function apoyarEnOracion(id) {
+            const peticion = peticiones.find(p => p.id === id);
+            if (!peticion) return;
+            if (!peticion.oradoPorMi) {
+                peticion.oraciones += 1;
+                peticion.oradoPorMi = true;
+                mostrarToast('Gracias por unirte en oración');
+            } else {
+                peticion.oraciones -= 1;
+                peticion.oradoPorMi = false;
+            }
+            renderizarPeticiones();
+        }
+
+        document.getElementById('prayer-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombreInput = document.getElementById('prayer-name');
+            const temaInput = document.getElementById('prayer-topic');
+            const textoInput = document.getElementById('prayer-text');
+            const texto = textoInput.value.trim();
+            if (!texto) return;
+            peticiones.unshift({
+                id: Date.now(),
+                nombre: nombreInput.value.trim() || 'Anónimo',
+                tema: temaInput.value,
+                texto: texto,
+                oraciones: 1,
+                oradoPorMi: true,
+                fecha: 'Ahora mismo'
+            });
+            renderizarPeticiones();
+            e.target.reset();
+            mostrarToast('Tu petición se añadió a tu muro');
+        });
+
+        // 8. Diario personal (localStorage)
+        const journalInput = document.getElementById('journal-input');
+        const journalStatus = document.getElementById('journal-status');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const notaGuardada = localStorage.getItem('senda_de_paz_diario');
+                if (notaGuardada) {
+                    journalInput.value = notaGuardada;
+                    journalStatus.textContent = 'Nota cargada desde tu dispositivo.';
+                }
+            } catch (e) {}
+            renderizarReflexiones();
+            renderizarPeticiones();
+        });
+
+        function guardarDiario() {
+            try {
+                localStorage.setItem('senda_de_paz_diario', journalInput.value);
+                journalStatus.textContent = 'Guardado en este dispositivo.';
+                mostrarToast('Nota de meditación guardada');
+            } catch (e) {
+                mostrarToast('No se pudo guardar la nota en este navegador.');
+            }
+        }
+
+        function limpiarDiario() {
+            journalInput.value = '';
+            try { localStorage.removeItem('senda_de_paz_diario'); } catch (e) {}
+            journalStatus.textContent = 'Nota limpiada.';
+            mostrarToast('Espacio de nota limpio');
+        }
+
+        // 9. Barra de progreso de lectura y Botón "Volver arriba"
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scroll-progress').style.width = scrolled + '%';
+            
+            const backToTop = document.getElementById('back-to-top');
+            if (winScroll > 500) {
+                backToTop.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+            } else {
+                backToTop.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }
+        });
+
+        // 10. Animaciones "Reveal" al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
